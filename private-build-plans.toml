@@ -35,3 +35,45 @@ angle = 0
 shape = "upright"
 menu = "upright"
 css = "normal"
+
+
+# ------------------------------
+# Build plan per CodeMono Term
+# ------------------------------
+[buildPlans.CodeMonoTerm]
+family = "Code Mono Term"
+spacing = "term"       # ottimizzato per terminale
+serifs = "sans"
+noCvSs = true
+exportGlyphNames = false
+
+  [buildPlans.CodeMonoTerm.variants]
+  inherits = "ss04"     # puoi ereditare le stesse feature della principale
+
+    [buildPlans.CodeMonoTerm.variants.design]
+    one = "no-base"
+    two = "straight-neck-serifless"
+    three = "two-arcs"
+    four = "closed-serifless"
+    six = "straight-bar"
+    nine = "straight-bar"
+    zero = "slashed"
+    capital-d = "more-rounded-serifless"
+    asterisk = "penta-mid"
+    ampersand = "upper-open"
+
+[buildPlans.CodeMonoTerm.weights.Regular]
+shape = 400
+menu = 400
+css = 400
+
+[buildPlans.CodeMonoTerm.widths.Normal]
+shape = 500
+menu = 5
+css = "normal"
+
+[buildPlans.CodeMonoTerm.slopes.Upright]
+angle = 0
+shape = "upright"
+menu = "upright"
+css = "normal"
