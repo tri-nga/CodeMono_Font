@@ -1,1 +1,103 @@
+name: Build CodeMono
 
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * *"   # controlla ogni giorno
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # -------------------------
+      # Checkout repo
+      # -------------------------
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # -------------------------
+      # Recupera ultima release upstream
+      # -------------------------
+      - name: Get latest Iosevka version
+        id: version
+        run: |
+          VERSION=$(curl -s https://api.github.com/repos/be5invis/Iosevka/releases/latest | jq -r .tag_name)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      # -------------------------
+      # Evita rebuild stessa versione
+      # -------------------------
+      - name: Check existing release
+        id: check_release
+        run: |
+          if gh release view "${{ steps.version.outputs.version }}" > /dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Stop if already built
+        if: steps.check_release.outputs.exists == 'true'
+        run: |
+          echo "Release already exists. Skipping build."
+          exit 0
+
+      # -------------------------
+      # Dipendenze sistema
+      # -------------------------
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y ttfautohint jq
+
+      # -------------------------
+      # Setup Node + cache
+      # -------------------------
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+
+      # -------------------------
+      # Clone Iosevka
+      # -------------------------
+      - name: Clone Iosevka
+        run: |
+          git clone --depth 1 --branch ${{ steps.version.outputs.version }} https://github.com/be5invis/Iosevka.git
+
+      - name: Copy build plan
+        run: |
+          cp private-build-plans.toml Iosevka/
+
+      # -------------------------
+      # Build SOLO TTF
+      # -------------------------
+      - name: Build font
+        working-directory: Iosevka
+        run: |
+          npm install
+          npm run build -- ttf::CodeMono
+
+      # -------------------------
+      # Zip output
+      # -------------------------
+      - name: Package fonts
+        run: |
+          cd Iosevka/dist
+          zip -r CodeMono-${{ steps.version.outputs.version }}.zip CodeMono
+
+      # -------------------------
+      # Crea release GitHub
+      # -------------------------
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: CodeMono ${{ steps.version.outputs.version }}
+          files: Iosevka/dist/CodeMono-${{ steps.version.outputs.version }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
