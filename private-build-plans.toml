@@ -25,6 +25,11 @@ shape = 400
 menu = 400
 css = 400
 
+[buildPlans.CodeMono.weights.Bold]
+shape = 700
+menu = 700
+css = 700
+
 [buildPlans.CodeMono.widths.Normal]
 shape = 500
 menu = 5
@@ -66,6 +71,11 @@ exportGlyphNames = false
 shape = 400
 menu = 400
 css = 400
+
+[buildPlans.CodeMonoTerm.weights.Bold]
+shape = 700
+menu = 700
+css = 700
 
 [buildPlans.CodeMonoTerm.widths.Normal]
 shape = 500
