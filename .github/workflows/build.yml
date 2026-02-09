@@ -1,9 +1,9 @@
-name: Build CodeMono
+name: Build CodeMono + Term
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 6 * * *"   # controlla ogni giorno
+    - cron: "0 6 * * *"  # controlla ogni giorno
 
 permissions:
   contents: write
@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v4
 
       # -------------------------
-      # Recupera ultima release upstream
+      # Recupera ultima release Iosevka
       # -------------------------
       - name: Get latest Iosevka version
         id: version
@@ -29,7 +29,7 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       # -------------------------
-      # Evita rebuild stessa versione
+      # Controlla se release esiste già
       # -------------------------
       - name: Check existing release
         id: check_release
@@ -49,23 +49,29 @@ jobs:
           exit 0
 
       # -------------------------
-      # Dipendenze sistema
+      # Dipendenze di sistema
       # -------------------------
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y ttfautohint jq
+          sudo apt install -y ttfautohint jq zip
 
-   
       # -------------------------
-      # Clone Iosevka
+      # Clona Iosevka
       # -------------------------
       - name: Clone Iosevka
         run: |
           git clone --depth 1 --branch ${{ steps.version.outputs.version }} https://github.com/be5invis/Iosevka.git
-      
+
       # -------------------------
-      # Setup Node + cache
+      # Copia build plan
+      # -------------------------
+      - name: Copy build plan
+        run: |
+          cp private-build-plans.toml Iosevka/
+
+      # -------------------------
+      # Setup Node
       # -------------------------
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -74,19 +80,23 @@ jobs:
           cache: npm
           cache-dependency-path: Iosevka/package-lock.json
 
-      
-      - name: Copy build plan
-        run: |
-          cp private-build-plans.toml Iosevka/
-
       # -------------------------
-      # Build SOLO TTF
+      # Build font principale TTF
       # -------------------------
-      - name: Build font
+      - name: Build CodeMono TTF
         working-directory: Iosevka
         run: |
           npm install
           npm run build -- ttf::CodeMono
+
+      # -------------------------
+      # Build Term TTF
+      # -------------------------
+      - name: Build CodeMono Term TTF
+        working-directory: Iosevka
+        run: |
+          npm install
+          npm run build -- ttf::CodeMonoTerm
 
       # -------------------------
       # Zip output
@@ -95,6 +105,7 @@ jobs:
         run: |
           cd Iosevka/dist
           zip -r CodeMono-${{ steps.version.outputs.version }}.zip CodeMono
+          zip -r CodeMonoTerm-${{ steps.version.outputs.version }}.zip CodeMonoTerm
 
       # -------------------------
       # Crea release GitHub
@@ -103,7 +114,10 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.version.outputs.version }}
-          name: CodeMono ${{ steps.version.outputs.version }}
-          files: Iosevka/dist/CodeMono-${{ steps.version.outputs.version }}.zip
+          name: CodeMono + Term ${{ steps.version.outputs.version }}
+          files: |
+            Iosevka/dist/CodeMono-${{ steps.version.outputs.version }}.zip
+            Iosevka/dist/CodeMonoTerm-${{ steps.version.outputs.version }}.zip
+          overwrite_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
