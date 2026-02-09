@@ -53,6 +53,14 @@ jobs:
           sudo apt update
           sudo apt install -y ttfautohint jq
 
+   
+      # -------------------------
+      # Clone Iosevka
+      # -------------------------
+      - name: Clone Iosevka
+        run: |
+          git clone --depth 1 --branch ${{ steps.version.outputs.version }} https://github.com/be5invis/Iosevka.git
+      
       # -------------------------
       # Setup Node + cache
       # -------------------------
@@ -61,14 +69,9 @@ jobs:
         with:
           node-version: 18
           cache: npm
+          cache-dependency-path: Iosevka/package-lock.json
 
-      # -------------------------
-      # Clone Iosevka
-      # -------------------------
-      - name: Clone Iosevka
-        run: |
-          git clone --depth 1 --branch ${{ steps.version.outputs.version }} https://github.com/be5invis/Iosevka.git
-
+      
       - name: Copy build plan
         run: |
           cp private-build-plans.toml Iosevka/
