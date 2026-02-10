@@ -41,6 +41,12 @@ shape = "upright"
 menu = "upright"
 css = "normal"
 
+[buildPlans.CodeMono.slopes.Italic]
+angle = 9.4
+shape = "italic"
+menu = "italic"
+css = "italic"
+
 
 # ------------------------------
 # Build plan per CodeMono Term
@@ -87,3 +93,9 @@ angle = 0
 shape = "upright"
 menu = "upright"
 css = "normal"
+
+[buildPlans.CodeMonoTerm.slopes.Italic]
+angle = 9.4
+shape = "italic"
+menu = "italic"
+css = "italic"
