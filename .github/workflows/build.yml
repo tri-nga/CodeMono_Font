@@ -74,12 +74,16 @@ jobs:
           cp private-build-plans.toml iosevka-source/
           cd iosevka-source
           npm install
-          # Buildiamo solo il target TTF per entrambi i piani definiti nel .toml
+          # Buildiamo solo il target TTF
           npm run build -- ttf::CodeMono ttf::CodeMonoTerm
           
-          # Creiamo un archivio pulito con i soli file TTF generati
+          # Ci spostiamo nella cartella dist dove sono stati generati i font
+          # La struttura sarà dist/CodeMono/TTF e dist/CodeMonoTerm/TTF
           cd dist
-          zip -r ../../Iosevka-CodeMono-TTF.zip ./**/*.ttf
+          
+          # Usiamo il comando find per raccogliere tutti i TTF in modo sicuro 
+          # e li mettiamo in uno zip nella root del progetto
+          find . -name "*.ttf" | zip -@ ../../Iosevka-CodeMono-TTF.zip
 
       # 9. Pubblicazione della Release con l'allegato
       - name: Create Release
@@ -88,7 +92,7 @@ jobs:
         with:
           tag_name: ${{ steps.iosevka.outputs.tag }}
           name: Iosevka Custom ${{ steps.iosevka.outputs.tag }}
-          body: "Build TTF completata per CodeMono e CodeMonoTerm."
+          body: "Build TTF completata con successo per CodeMono e CodeMonoTerm."
           files: Iosevka-CodeMono-TTF.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
