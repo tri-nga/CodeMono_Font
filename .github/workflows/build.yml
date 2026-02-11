@@ -1,136 +1,94 @@
-name: Build CodeMono + Term
-
+name: Build Code Mono
 on:
-  workflow_dispatch:
   schedule:
-    - cron: "0 7 * * 3" # mercoledì 07:00
-
-permissions:
-  contents: write
+    - cron: '30 19 * * 5' # Esecuzione automatica ogni Venerdi 19:30
+  workflow_dispatch:      # Permette l'avvio manuale per testare subito
 
 jobs:
-  build:
+  check-and-build:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: write
+    
     steps:
-      # -------------------------
-      # Checkout repo
-      # -------------------------
-      - name: Checkout
+      # 1. Checkout del tuo repository privato per accedere al .toml
+      - name: Checkout your repo
         uses: actions/checkout@v4
 
-      # -------------------------
-      # Recupera ultima release upstream
-      # -------------------------
+      # 2. Controllo ultima versione rilasciata da be5invis
       - name: Get latest Iosevka version
-        id: version
+        id: iosevka
         run: |
           VERSION=$(curl -s https://api.github.com/repos/be5invis/Iosevka/releases/latest | jq -r .tag_name)
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=$VERSION" >> $GITHUB_OUTPUT
 
-      # -------------------------
-      # Controlla se release già esiste
-      # -------------------------
-      - name: Check existing release
+      # 3. Verifica se hai già buildato questa versione specifica nel tuo repo
+      - name: Check if release already exists
         id: check_release
         run: |
-          if gh release view "${{ steps.version.outputs.version }}" > /dev/null 2>&1; then
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ steps.iosevka.outputs.tag }})
+          
+          if [ "$HTTP_STATUS" == "200" ]; then
             echo "exists=true" >> $GITHUB_OUTPUT
+            echo "Versione ${{ steps.iosevka.outputs.tag }} già presente. Skipping."
           else
             echo "exists=false" >> $GITHUB_OUTPUT
           fi
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # -------------------------
-      # Log skip (solo informativo)
-      # -------------------------
-      - name: Skip build info
-        if: steps.check_release.outputs.exists == 'true'
-        run: echo "No new upstream release. Skipping build."
-
-      # -------------------------
-      # Dipendenze sistema
-      # -------------------------
-      - name: Install dependencies
-        if: steps.check_release.outputs.exists != 'true'
-        run: |
-          sudo apt update
-          sudo apt install -y ttfautohint jq zip
-
-      # -------------------------
-      # Clone Iosevka
-      # -------------------------
-      - name: Clone Iosevka
-        if: steps.check_release.outputs.exists != 'true'
-        run: |
-          git clone --depth 1 --branch ${{ steps.version.outputs.version }} https://github.com/be5invis/Iosevka.git
-
-      # -------------------------
-      # Copia build plan
-      # -------------------------
-      - name: Copy build plan
-        if: steps.check_release.outputs.exists != 'true'
-        run: |
-          cp private-build-plans.toml Iosevka/
-
-      # -------------------------
-      # Setup Node
-      # -------------------------
-      - name: Setup Node
-        if: steps.check_release.outputs.exists != 'true'
+      # 4. Setup ambiente Node.js (necessario per la build pipeline di Iosevka)
+      - name: Setup Node.js
+        if: steps.check_release.outputs.exists == 'false'
         uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: Iosevka/package-lock.json
+          node-version: '22'
 
-      # -------------------------
-      # Install npm dependencies (una sola volta)
-      # -------------------------
-      - name: Install npm deps
-        if: steps.check_release.outputs.exists != 'true'
-        working-directory: Iosevka
-        run: npm install
-
-      # -------------------------
-      # Build CodeMono
-      # -------------------------
-      - name: Build CodeMono TTF
-        if: steps.check_release.outputs.exists != 'true'
-        working-directory: Iosevka
-        run: npm run build -- ttf::CodeMono
-
-      # -------------------------
-      # Build CodeMono Term
-      # -------------------------
-      - name: Build CodeMono Term TTF
-        if: steps.check_release.outputs.exists != 'true'
-        working-directory: Iosevka
-        run: npm run build -- ttf::CodeMonoTerm
-
-      # -------------------------
-      # Zip output
-      # -------------------------
-      - name: Package fonts
-        if: steps.check_release.outputs.exists != 'true'
-        run: |
-          cd Iosevka/dist
-          zip -r CodeMono-${{ steps.version.outputs.version }}.zip CodeMono
-          zip -r CodeMonoTerm-${{ steps.version.outputs.version }}.zip CodeMonoTerm
-
-      # -------------------------
-      # Crea release
-      # -------------------------
-      - name: Create Release
-        if: steps.check_release.outputs.exists != 'true'
-        uses: softprops/action-gh-release@v2
+      # 5. Cache dei node_modules per velocizzare installazioni future
+      - name: Cache Node Modules
+        if: steps.check_release.outputs.exists == 'false'
+        uses: actions/cache@v3
         with:
-          tag_name: ${{ steps.version.outputs.version }}
-          name: CodeMono + Term ${{ steps.version.outputs.version }}
-          files: |
-            Iosevka/dist/CodeMono-${{ steps.version.outputs.version }}.zip
-            Iosevka/dist/CodeMonoTerm-${{ steps.version.outputs.version }}.zip
-          overwrite_files: true
+          path: iosevka-source/node_modules
+          key: ${{ runner.os }}-iosevka-${{ steps.iosevka.outputs.tag }}
+          restore-keys: |
+            ${{ runner.os }}-iosevka-
+
+      # 6. Installazione dipendenze di sistema (ttfautohint serve per i TTF di qualità)
+      - name: Install Build Dependencies
+        if: steps.check_release.outputs.exists == 'false'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ttfautohint
+
+      # 7. Clone "shallow" (veloce) del solo tag interessato
+      - name: Clone Iosevka
+        if: steps.check_release.outputs.exists == 'false'
+        run: |
+          git clone --depth 1 --branch ${{ steps.iosevka.outputs.tag }} https://github.com/be5invis/Iosevka.git iosevka-source
+
+      # 8. Esecuzione build mirata solo ai TTF per i tuoi due piani
+      - name: Build Custom Font (TTF Only)
+        if: steps.check_release.outputs.exists == 'false'
+        run: |
+          cp private-build-plans.toml iosevka-source/
+          cd iosevka-source
+          npm install
+          # Buildiamo solo il target TTF per entrambi i piani definiti nel .toml
+          npm run build -- ttf::CodeMono ttf::CodeMonoTerm
+          
+          # Creiamo un archivio pulito con i soli file TTF generati
+          cd dist
+          zip -r ../../Iosevka-CodeMono-TTF.zip ./**/*.ttf
+
+      # 9. Pubblicazione della Release con l'allegato
+      - name: Create Release
+        if: steps.check_release.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.iosevka.outputs.tag }}
+          name: Iosevka Custom ${{ steps.iosevka.outputs.tag }}
+          body: "Build TTF completata per CodeMono e CodeMonoTerm."
+          files: Iosevka-CodeMono-TTF.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
