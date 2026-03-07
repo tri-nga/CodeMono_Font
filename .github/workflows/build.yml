@@ -61,7 +61,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ttfautohint
 
-      # 7. Clone "shallow" (veloce) del solo tag interessato
+      # 7. Rimuove cartella iosevka-source se presente
+      - name: Remove iosevka-source if exists
+        if: steps.check_release.outputs.exists == 'false'
+        run: |
+          if [ -d "iosevka-source" ]; then rm -rf iosevka-source; fi
+
+      # 8. Clone "shallow" (veloce) del solo tag interessato
       - name: Clone Iosevka
         if: steps.check_release.outputs.exists == 'false'
         run: |
@@ -85,7 +91,7 @@ jobs:
           # e li mettiamo in uno zip nella root del progetto
           find . -name "*.ttf" | zip -@ ../../Iosevka-CodeMono-TTF.zip
 
-      # 9. Pubblicazione della Release con l'allegato
+      # 10. Pubblicazione della Release con l'allegato
       - name: Create Release
         if: steps.check_release.outputs.exists == 'false'
         uses: softprops/action-gh-release@v1
