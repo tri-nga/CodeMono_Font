@@ -35,6 +35,11 @@ shape = 500
 menu = 5
 css = "normal"
 
+[buildPlans.CodeMono.widths.Expanded]
+shape = 600
+menu = 7
+css = "expanded"
+
 [buildPlans.CodeMono.slopes.Upright]
 angle = 0
 shape = "upright"
@@ -87,6 +92,11 @@ css = 700
 shape = 500
 menu = 5
 css = "normal"
+
+[buildPlans.CodeMonoTerm.widths.Expanded]
+shape = 600
+menu = 7
+css = "expanded"
 
 [buildPlans.CodeMonoTerm.slopes.Upright]
 angle = 0
