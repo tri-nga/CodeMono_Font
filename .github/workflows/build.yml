@@ -42,7 +42,7 @@ jobs:
         if: steps.check_release.outputs.exists == 'false'
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
 
       # 5. Cache dei node_modules per velocizzare installazioni future
       - name: Cache Node Modules
