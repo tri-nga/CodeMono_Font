@@ -87,16 +87,16 @@ jobs:
           npm run build -- \
             ttf::CodeMono \
             ttf::CodeMonoTerm \
-            ttf::CodeMonoSemiExtended \
-            ttf::CodeMonoTermSemiExtended
+            ttf::CodeMonoSE \
+            ttf::CodeMonoTermSE
 
           # Packaging
           cd dist
 
           zip -r ../../CodeMono-${{ steps.iosevka.outputs.tag }}.zip CodeMono
-          zip -r ../../CodeMonoSemiExtended-${{ steps.iosevka.outputs.tag }}.zip CodeMonoSemiExtended
+          zip -r ../../CodeMonoSE-${{ steps.iosevka.outputs.tag }}.zip CodeMono-SE
           zip -r ../../CodeMonoTerm-${{ steps.iosevka.outputs.tag }}.zip CodeMonoTerm
-          zip -r ../../CodeMonoTermSemiExtended-${{ steps.iosevka.outputs.tag }}.zip CodeMonoTermSemiExtended
+          zip -r ../../CodeMonoTermSE-${{ steps.iosevka.outputs.tag }}.zip CodeMonoTerm-SE
 
       # 10. Creazione Release GitHub
       - name: Create Release
@@ -110,13 +110,13 @@ jobs:
 
             Varianti incluse:
             - CodeMono
-            - CodeMono SemiExtended
+            - CodeMono SE
             - CodeMono Term
-            - CodeMono Term SemiExtended
+            - CodeMono Term SE
           files: |
             CodeMono-${{ steps.iosevka.outputs.tag }}.zip
-            CodeMonoSemiExtended-${{ steps.iosevka.outputs.tag }}.zip
+            CodeMonoSE-${{ steps.iosevka.outputs.tag }}.zip
             CodeMonoTerm-${{ steps.iosevka.outputs.tag }}.zip
-            CodeMonoTermSemiExtended-${{ steps.iosevka.outputs.tag }}.zip
+            CodeMonoTermSE-${{ steps.iosevka.outputs.tag }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
