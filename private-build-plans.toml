@@ -1,9 +1,22 @@
 [buildPlans.CodeMono]
-family = "Code Mono"
+family = "CodeMono"
 spacing = "normal"
 serifs = "sans"
 noCvSs = true
 exportGlyphNames = false
+
+codepoints = [
+  "basic-latin",
+  "latin-1-supplement",
+  "latin-extended-a",
+  "general-punctuation",
+  "currency-symbols",
+  "letterlike-symbols",
+  "arrows",
+  "mathematical-operators",
+  "box-drawing",
+  "block-elements"
+]
 
   [buildPlans.CodeMono.variants]
   inherits = "ss04"
@@ -35,11 +48,6 @@ shape = 500
 menu = 5
 css = "normal"
 
-[buildPlans.CodeMono.widths.Expanded]
-shape = 600
-menu = 7
-css = "expanded"
-
 [buildPlans.CodeMono.slopes.Upright]
 angle = 0
 shape = "upright"
@@ -53,18 +61,31 @@ menu = "italic"
 css = "italic"
 
 
-# ------------------------------
+# ----------------------------
 # Build plan per CodeMono Term
-# ------------------------------
+# ----------------------------
 [buildPlans.CodeMonoTerm]
-family = "Code Mono Term"
-spacing = "term"       # ottimizzato per terminale
+family = "CodeMono Term"
+spacing = "term"
 serifs = "sans"
 noCvSs = true
 exportGlyphNames = false
 
+codepoints = [
+  "basic-latin",
+  "latin-1-supplement",
+  "latin-extended-a",
+  "general-punctuation",
+  "currency-symbols",
+  "letterlike-symbols",
+  "arrows",
+  "mathematical-operators",
+  "box-drawing",
+  "block-elements"
+]
+
   [buildPlans.CodeMonoTerm.variants]
-  inherits = "ss04"     # puoi ereditare le stesse feature della principale
+  inherits = "ss04"
 
     [buildPlans.CodeMonoTerm.variants.design]
     one = "no-base"
@@ -93,11 +114,6 @@ shape = 500
 menu = 5
 css = "normal"
 
-[buildPlans.CodeMonoTerm.widths.Expanded]
-shape = 600
-menu = 7
-css = "expanded"
-
 [buildPlans.CodeMonoTerm.slopes.Upright]
 angle = 0
 shape = "upright"
@@ -105,6 +121,137 @@ menu = "upright"
 css = "normal"
 
 [buildPlans.CodeMonoTerm.slopes.Italic]
+angle = 9.4
+shape = "italic"
+menu = "italic"
+css = "italic"
+
+
+# ------------------------------------
+# Build plan per CodeMono SemiExtended
+# ------------------------------------
+[buildPlans.CodeMonoSemiExtended]
+family = "CodeMono SE"
+spacing = "normal"
+serifs = "sans"
+noCvSs = true
+exportGlyphNames = false
+
+codepoints = [
+  "basic-latin",
+  "latin-1-supplement",
+  "latin-extended-a",
+  "general-punctuation",
+  "currency-symbols",
+  "letterlike-symbols",
+  "arrows",
+  "mathematical-operators",
+  "box-drawing",
+  "block-elements"
+]
+
+  [buildPlans.CodeMonoSemiExtended.variants]
+  inherits = "ss04"
+
+    [buildPlans.CodeMonoSemiExtended.variants.design]
+    one = "no-base"
+    two = "straight-neck-serifless"
+    three = "two-arcs"
+    four = "closed-serifless"
+    six = "straight-bar"
+    nine = "straight-bar"
+    zero = "slashed"
+    capital-d = "more-rounded-serifless"
+    asterisk = "penta-mid"
+    ampersand = "upper-open"
+
+[buildPlans.CodeMonoSemiExtended.weights.Regular]
+shape = 400
+menu = 400
+css = 400
+
+[buildPlans.CodeMonoSemiExtended.weights.Bold]
+shape = 700
+menu = 700
+css = 700
+
+[buildPlans.CodeMonoSemiExtended.widths.SemiExtended]
+shape = 548
+menu = 6
+css = "semi-expanded"
+
+[buildPlans.CodeMonoSemiExtended.slopes.Upright]
+angle = 0
+shape = "upright"
+menu = "upright"
+css = "normal"
+
+[buildPlans.CodeMonoSemiExtended.slopes.Italic]
+angle = 9.4
+shape = "italic"
+menu = "italic"
+css = "italic"
+
+# -----------------------------------------
+# Build plan per CodeMono Term SemiExtended
+# -----------------------------------------
+[buildPlans.CodeMonoTermSemiExtended]
+family = "CodeMono Term SE"
+spacing = "term"
+serifs = "sans"
+noCvSs = true
+exportGlyphNames = false
+
+codepoints = [
+  "basic-latin",
+  "latin-1-supplement",
+  "latin-extended-a",
+  "general-punctuation",
+  "currency-symbols",
+  "letterlike-symbols",
+  "arrows",
+  "mathematical-operators",
+  "box-drawing",
+  "block-elements"
+]
+
+  [buildPlans.CodeMonoTermSemiExtended.variants]
+  inherits = "ss04"
+
+    [buildPlans.CodeMonoTermSemiExtended.variants.design]
+    one = "no-base"
+    two = "straight-neck-serifless"
+    three = "two-arcs"
+    four = "closed-serifless"
+    six = "straight-bar"
+    nine = "straight-bar"
+    zero = "slashed"
+    capital-d = "more-rounded-serifless"
+    asterisk = "penta-mid"
+    ampersand = "upper-open"
+
+[buildPlans.CodeMonoTermSemiExtended.weights.Regular]
+shape = 400
+menu = 400
+css = 400
+
+[buildPlans.CodeMonoTermSemiExtended.weights.Bold]
+shape = 700
+menu = 700
+css = 700
+
+[buildPlans.CodeMonoTermSemiExtended.widths.SemiExtended]
+shape = 548
+menu = 6
+css = "semi-expanded"
+
+[buildPlans.CodeMonoTermSemiExtended.slopes.Upright]
+angle = 0
+shape = "upright"
+menu = "upright"
+css = "normal"
+
+[buildPlans.CodeMonoTermSemiExtended.slopes.Italic]
 angle = 9.4
 shape = "italic"
 menu = "italic"
