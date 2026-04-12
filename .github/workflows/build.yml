@@ -48,7 +48,7 @@ jobs:
       # 5. Cache node_modules per velocizzare le build
       - name: Cache Node Modules
         if: steps.check_release.outputs.exists == 'false'
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: iosevka-source/node_modules
           key: ${{ runner.os }}-iosevka-${{ steps.iosevka.outputs.tag }}
@@ -94,9 +94,9 @@ jobs:
           cd dist
 
           zip -r ../../CodeMono-${{ steps.iosevka.outputs.tag }}.zip CodeMono
-          zip -r ../../CodeMonoSE-${{ steps.iosevka.outputs.tag }}.zip CodeMono-SE
+          zip -r ../../CodeMonoSE-${{ steps.iosevka.outputs.tag }}.zip CodeMonoSE
           zip -r ../../CodeMonoTerm-${{ steps.iosevka.outputs.tag }}.zip CodeMonoTerm
-          zip -r ../../CodeMonoTermSE-${{ steps.iosevka.outputs.tag }}.zip CodeMonoTerm-SE
+          zip -r ../../CodeMonoTermSE-${{ steps.iosevka.outputs.tag }}.zip CodeMonoTermSE
 
       # 10. Creazione Release GitHub
       - name: Create Release
