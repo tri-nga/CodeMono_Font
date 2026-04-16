@@ -83,20 +83,17 @@ jobs:
 
           npm install
 
-          # Build dei 4 font
+          # Build dei 2 font
           npm run build -- \
             ttf::CodeMono \
-            ttf::CodeMonoTerm \
-            ttf::CodeMonoSE \
-            ttf::CodeMonoTermSE
+            ttf::CodeMonoTerm
+          
 
           # Packaging
           cd dist
 
           zip -r ../../CodeMono-${{ steps.iosevka.outputs.tag }}.zip CodeMono
-          zip -r ../../CodeMonoSE-${{ steps.iosevka.outputs.tag }}.zip CodeMonoSE
           zip -r ../../CodeMonoTerm-${{ steps.iosevka.outputs.tag }}.zip CodeMonoTerm
-          zip -r ../../CodeMonoTermSE-${{ steps.iosevka.outputs.tag }}.zip CodeMonoTermSE
 
       # 10. Creazione Release GitHub
       - name: Create Release
@@ -110,13 +107,9 @@ jobs:
 
             Varianti incluse:
             - CodeMono
-            - CodeMono SE
             - CodeMono Term
-            - CodeMono Term SE
           files: |
             CodeMono-${{ steps.iosevka.outputs.tag }}.zip
-            CodeMonoSE-${{ steps.iosevka.outputs.tag }}.zip
             CodeMonoTerm-${{ steps.iosevka.outputs.tag }}.zip
-            CodeMonoTermSE-${{ steps.iosevka.outputs.tag }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
