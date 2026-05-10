@@ -14,7 +14,7 @@ jobs:
     steps:
       # 1. Checkout del tuo repository privato
       - name: Checkout your repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # 2. Recupera ultima release di Iosevka
       - name: Get latest Iosevka version
@@ -41,14 +41,14 @@ jobs:
       # 4. Setup Node.js (richiesto da Iosevka)
       - name: Setup Node.js
         if: steps.check_release.outputs.exists == 'false'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '24'
 
       # 5. Cache node_modules per velocizzare le build
       - name: Cache Node Modules
         if: steps.check_release.outputs.exists == 'false'
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: iosevka-source/node_modules
           key: ${{ runner.os }}-iosevka-${{ steps.iosevka.outputs.tag }}
@@ -98,7 +98,7 @@ jobs:
       # 10. Creazione Release GitHub
       - name: Create Release
         if: steps.check_release.outputs.exists == 'false'
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ steps.iosevka.outputs.tag }}
           name: CodeMono ${{ steps.iosevka.outputs.tag }}
