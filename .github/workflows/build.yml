@@ -2,7 +2,8 @@ name: Build Code Mono
 
 on:
   schedule:
-    - cron: '30 19 * * 5' # Esecuzione automatica ogni Venerdi 19:30
+     - cron: '0 10 * * 6'  # Sabato alle 10:00 UTC
+     - cron: '0 13 * * 3'  # Mercoledì alle 13:00 UTC
   workflow_dispatch:      # Permette l'avvio manuale
 
 jobs:
